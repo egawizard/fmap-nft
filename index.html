@@ -5,17 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FMAP - Farcaster Map NFT</title>
   
-  <!-- Farcaster Frame Meta Tags (v1 - Most Compatible) -->
-  <meta property="fc:frame" content="vNext" />
-  <meta property="fc:frame:image" content="https://fmap-nft.vercel.app/og-image.png" />
-  <meta property="fc:frame:image:aspect_ratio" content="1:1" />
-  <meta property="fc:frame:button:1" content="🎨 Mint NFT" />
-  <meta property="fc:frame:button:1:action" content="link" />
-  <meta property="fc:frame:button:1:target" content="https://fmap-nft.vercel.app" />
-  <meta property="fc:frame:button:2" content="📊 View Contract" />
-  <meta property="fc:frame:button:2:action" content="link" />
-  <meta property="fc:frame:button:2:target" content="https://basescan.org/address/0xf9bb77aA3C2F5e7A3387331aa596269fE5920bF3" />
-  <meta property="fc:frame:post_url" content="https://fmap-nft.vercel.app" />
+  <!-- Farcaster Mini App Meta Tags (Correct Format) -->
+  <meta name="fc:miniapp" content='{"version":"1","imageUrl":"https://fmap-nft.vercel.app/og-image.png","button":{"title":"🎨 Mint NFT","action":{"type":"launch_frame","name":"FMAP - Farcaster Map","url":"https://fmap-nft.vercel.app","splashImageUrl":"https://fmap-nft.vercel.app/og-image.png","splashBackgroundColor":"#000000"}}}' />
+  
+  <!-- Backward compatibility -->
+  <meta name="fc:frame" content='{"version":"1","imageUrl":"https://fmap-nft.vercel.app/og-image.png","button":{"title":"🎨 Mint NFT","action":{"type":"launch_frame","name":"FMAP - Farcaster Map","url":"https://fmap-nft.vercel.app","splashImageUrl":"https://fmap-nft.vercel.app/og-image.png","splashBackgroundColor":"#000000"}}}' />
   
   <!-- Open Graph Tags (Fallback) -->
   <meta property="og:title" content="FMAP - Farcaster Map NFT" />
@@ -266,6 +260,22 @@
     let account = null;
     let totalMinted = 0;
     let userMinted = 0;
+    let farcasterSDK = null;
+
+    // Import Farcaster SDK
+    import('https://esm.sh/@farcaster/miniapp-sdk').then(module => {
+      farcasterSDK = module.sdk;
+      console.log('Farcaster SDK loaded');
+      
+      // Signal app is ready (important for Mini Apps!)
+      farcasterSDK.actions.ready().then(() => {
+        console.log('Farcaster Mini App ready');
+      }).catch(err => {
+        console.log('Not in Farcaster context:', err);
+      });
+    }).catch(err => {
+      console.log('SDK not available, running in standard mode');
+    });
 
     // Generate stars
     const starsContainer = document.getElementById('stars');
