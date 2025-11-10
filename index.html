@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FMAP - Farcaster Map NFT</title>
+  
+  <!-- Farcaster Frame Meta Tags -->
+  <meta property="fc:frame" content="vNext" />
+  <meta property="fc:frame:image" content="https://YOUR_DOMAIN/frame-image.png" />
+  <meta property="fc:frame:button:1" content="Mint FMAP NFT" />
+  <meta property="fc:frame:button:1:action" content="link" />
+  <meta property="fc:frame:button:1:target" content="https://YOUR_DOMAIN" />
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="FMAP - Farcaster Map NFT" />
+  <meta property="og:description" content="Mint your on-chain generated pixel art NFT on Base. 10K supply, $0.25 each!" />
+  <meta property="og:image" content="https://YOUR_DOMAIN/og-image.png" />
+  <meta property="og:url" content="https://YOUR_DOMAIN" />
+  
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="FMAP - Farcaster Map NFT" />
+  <meta name="twitter:description" content="Mint your on-chain pixel art NFT on Base" />
+  <meta name="twitter:image" content="https://YOUR_DOMAIN/twitter-image.png" />
+  <meta name="twitter:creator" content="@ega_2ez4crypto" />
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; }
+    body { background: #000; color: #fff; overflow-x: hidden; }
+    
+    .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .star { position: absolute; background: white; border-radius: 50%; animation: pulse 2s infinite; opacity: 0.6; }
+    @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+    
+    .gradient-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(147, 51, 234, 0.2) 0%, transparent 50%, rgba(59, 130, 246, 0.2) 100%); pointer-events: none; z-index: 2; }
+    .container { position: relative; z-index: 10; }
+    
+    header { border-bottom: 1px solid #1f2937; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); }
+    .header-content { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 0.75rem; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #a855f7, #3b82f6); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; }
+    .logo-text { font-size: 1.5rem; font-weight: 900; letter-spacing: 0.05em; }
+    
+    .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 0.5rem; color: white; }
+    .btn-primary { background: linear-gradient(90deg, #9333ea, #3b82f6); }
+    .btn-primary:hover { transform: scale(1.05); }
+    .wallet-info { padding: 0.5rem 1rem; background: #1f2937; border: 1px solid #374151; border-radius: 8px; font-size: 0.875rem; display: none; }
+    .wallet-label { color: #9ca3af; }
+    
+    main { max-width: 1000px; margin: 0 auto; padding: 4rem 1.5rem; }
+    .hero { text-align: center; margin-bottom: 3rem; }
+    .hero-title { font-size: 4rem; font-weight: 900; margin-bottom: 1rem; background: linear-gradient(90deg, #c084fc, #f472b6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: pulse 2s infinite; }
+    .hero-subtitle { font-size: 1.25rem; color: #9ca3af; margin-bottom: 0.5rem; }
+    .hero-desc { color: #6b7280; }
+    
+    .nft-preview { display: flex; justify-content: center; margin-bottom: 3rem; }
+    .nft-frame { width: 256px; height: 256px; background: linear-gradient(135deg, #581c87, #1e3a8a, #831843); border-radius: 16px; padding: 4px; }
+    .nft-inner { width: 100%; height: 100%; background: #000; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .pixel-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 1rem; }
+    .pixel { width: 16px; height: 16px; border-radius: 2px; animation: pulse 2s infinite; }
+    
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem; }
+    .stat-card { background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(10px); border: 1px solid #1f2937; border-radius: 12px; padding: 1.5rem; text-align: center; }
+    .stat-value { font-size: 2rem; font-weight: 900; margin-bottom: 0.5rem; }
+    .stat-label { font-size: 0.875rem; color: #9ca3af; }
+    
+    .mint-section { background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(10px); border: 1px solid #1f2937; border-radius: 16px; padding: 2rem; margin-bottom: 2rem; }
+    .section-title { font-size: 1.5rem; font-weight: 900; margin-bottom: 1.5rem; text-align: center; }
+    .mint-controls { max-width: 448px; margin: 0 auto; }
+    
+    .amount-control { margin-bottom: 1.5rem; }
+    .amount-label { display: block; font-size: 0.875rem; color: #9ca3af; margin-bottom: 0.5rem; }
+    .amount-input-group { display: flex; align-items: center; gap: 1rem; }
+    .amount-btn { width: 48px; height: 48px; background: #1f2937; border: none; border-radius: 8px; font-size: 1.25rem; font-weight: 700; color: white; cursor: pointer; transition: background 0.3s; }
+    .amount-btn:hover { background: #374151; }
+    .amount-input { flex: 1; height: 48px; background: #1f2937; border: 1px solid #374151; border-radius: 8px; text-align: center; font-size: 1.5rem; font-weight: 700; color: white; font-family: 'JetBrains Mono', monospace; }
+    .amount-input:focus { outline: none; border-color: #9333ea; }
+    
+    .cost-info { background: rgba(31, 41, 55, 0.5); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
+    .cost-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    .cost-row:last-child { margin-bottom: 0; }
+    .cost-label { color: #9ca3af; }
+    .cost-value { font-weight: 700; }
+    
+    .btn-mint { width: 100%; padding: 1rem; background: linear-gradient(90deg, #9333ea, #3b82f6); border: none; border-radius: 12px; font-size: 1.125rem; font-weight: 900; color: white; cursor: pointer; transition: all 0.3s; }
+    .btn-mint:hover:not(:disabled) { transform: scale(1.05); }
+    .btn-mint:disabled { background: linear-gradient(90deg, #374151, #1f2937); cursor: not-allowed; }
+    
+    .status-message { margin-top: 1rem; padding: 1rem; border-radius: 8px; display: none; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
+    .status-success { background: rgba(5, 150, 105, 0.5); border: 1px solid #059669; }
+    .status-error { background: rgba(220, 38, 38, 0.5); border: 1px solid #dc2626; }
+    .status-info { background: rgba(37, 99, 235, 0.5); border: 1px solid #2563eb; }
+    
+    .contract-info { background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(10px); border: 1px solid #1f2937; border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; font-size: 0.875rem; }
+    .info-label { color: #9ca3af; }
+    .info-value { font-weight: 700; }
+    .info-link { display: flex; align-items: center; gap: 0.25rem; color: #a855f7; text-decoration: none; font-family: monospace; }
+    .info-link:hover { color: #c084fc; }
+    
+    footer { border-top: 1px solid #1f2937; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px); padding: 1.5rem; text-align: center; }
+    .footer-label { color: #9ca3af; margin-bottom: 0.5rem; }
+    .footer-link { display: inline-flex; align-items: center; gap: 0.5rem; color: #60a5fa; text-decoration: none; font-weight: 700; transition: color 0.3s; }
+    .footer-link:hover { color: #93c5fd; }
+    .footer-copyright { font-size: 0.75rem; color: #4b5563; margin-top: 1rem; }
+    
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.5rem; }
+      .stats { grid-template-columns: 1fr; }
+      .header-content { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars" id="stars"></div>
+  <div class="gradient-overlay"></div>
+  
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">F</div>
+          <div class="logo-text">FMAP</div>
+        </div>
+        <button id="connectBtn" class="btn btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/>
+            <path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/>
+            <path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>
+          </svg>
+          Connect Wallet
+        </button>
+        <div id="walletInfo" class="wallet-info">
+          <span class="wallet-label">Connected: </span>
+          <span id="walletAddress"></span>
+        </div>
+      </div>
+    </header>
+    
+    <main>
+      <div class="hero">
+        <h1 class="hero-title">FARCASTER MAP</h1>
+        <p class="hero-subtitle">Pixel Art NFT Collection on Base</p>
+        <p class="hero-desc">Join the on-chain community mapping revolution</p>
+      </div>
+      
+      <div class="nft-preview">
+        <div class="nft-frame">
+          <div class="nft-inner">
+            <div class="pixel-grid" id="pixelGrid"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" style="color: #a855f7;">
+            <span id="totalMinted">0</span>/10000
+          </div>
+          <div class="stat-label">Minted</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #60a5fa;">$0.25</div>
+          <div class="stat-label">Mint Price</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="color: #f472b6;">10</div>
+          <div class="stat-label">Max Per Wallet</div>
+        </div>
+      </div>
+      
+      <div class="mint-section">
+        <h3 class="section-title">Mint Your FMAP NFT</h3>
+        <div class="mint-controls">
+          <div class="amount-control">
+            <label class="amount-label">Amount (<span id="userMinted">0</span>/10 minted)</label>
+            <div class="amount-input-group">
+              <button class="amount-btn" id="decreaseBtn">-</button>
+              <input type="number" class="amount-input" id="mintAmount" value="1" min="1" max="10">
+              <button class="amount-btn" id="increaseBtn">+</button>
+            </div>
+          </div>
+          <div class="cost-info">
+            <div class="cost-row">
+              <span class="cost-label">Total Cost:</span>
+              <span class="cost-value" id="totalCostETH">0.00025 ETH</span>
+            </div>
+            <div class="cost-row">
+              <span class="cost-label">≈ USD:</span>
+              <span class="cost-value" style="color: #10b981;" id="totalCostUSD">$0.25</span>
+            </div>
+          </div>
+          <button class="btn-mint" id="mintBtn" disabled>Mint Now</button>
+          <div id="statusMessage" class="status-message"></div>
+        </div>
+      </div>
+      
+      <div class="contract-info">
+        <h4 class="section-title">Contract Information</h4>
+        <div class="info-row">
+          <span class="info-label">Network:</span>
+          <span class="info-value" style="color: #60a5fa;">Base Mainnet</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Contract:</span>
+          <a href="https://basescan.org/address/0xf9bb77aA3C2F5e7A3387331aa596269fE5920bF3" target="_blank" class="info-link">
+            0xf9bb...0bF3
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Treasury:</span>
+          <a href="https://basescan.org/address/0xb9AE3cDFA1ca0484E24E465Df7F49aDBd175B642" target="_blank" class="info-link" style="color: #10b981;">
+            0xb9AE...B642
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </a>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Standard:</span>
+          <span class="info-value">ERC-721</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Metadata:</span>
+          <span class="info-value" style="color: #a855f7;">On-Chain Generated</span>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p class="footer-label">Created by</p>
+      <a href="https://x.com/ega_2ez4crypto" target="_blank" class="footer-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+        </svg>
+        @ega_2ez4crypto
+      </a>
+      <p class="footer-copyright">© 2024 FMAP. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    const CONTRACT_ADDRESS = '0xf9bb77aA3C2F5e7A3387331aa596269fE5920bF3';
+    const MINT_PRICE = 0.00025;
+    const MAX_PER_WALLET = 10;
+    let account = null;
+    let totalMinted = 0;
+    let userMinted = 0;
+
+    // Generate stars
+    const starsContainer = document.getElementById('stars');
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.width = (Math.random() * 3 + 1) + 'px';
+      star.style.height = star.style.width;
+      star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      star.style.animationDelay = (Math.random() * 2) + 's';
+      starsContainer.appendChild(star);
+    }
+
+    // Generate pixel grid
+    const pixelGrid = document.getElementById('pixelGrid');
+    for (let i = 0; i < 64; i++) {
+      const pixel = document.createElement('div');
+      pixel.className = 'pixel';
+      pixel.style.backgroundColor = 'hsl(' + ((i * 137.5) % 360) + ', 70%, 50%)';
+      pixel.style.animationDelay = (i * 0.02) + 's';
+      pixelGrid.appendChild(pixel);
+    }
+
+    function updateCost() {
+      const amount = parseInt(document.getElementById('mintAmount').value) || 1;
+      document.getElementById('totalCostETH').textContent = (MINT_PRICE * amount).toFixed(6) + ' ETH';
+      document.getElementById('totalCostUSD').textContent = '$' + (MINT_PRICE * amount * 4000).toFixed(2);
+    }
+
+    document.getElementById('connectBtn').addEventListener('click', async function() {
+      if (typeof window.ethereum === 'undefined') {
+        alert('Please install MetaMask!');
+        return;
+      }
+
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+        if (chainId !== '0x2105') {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x2105' }]
+            });
+          } catch (error) {
+            if (error.code === 4902) {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0x2105',
+                  chainName: 'Base',
+                  nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+                  rpcUrls: ['https://mainnet.base.org'],
+                  blockExplorerUrls: ['https://basescan.org']
+                }]
+              });
+            }
+          }
+        }
+
+        account = accounts[0];
+        document.getElementById('connectBtn').style.display = 'none';
+        document.getElementById('walletInfo').style.display = 'block';
+        document.getElementById('walletAddress').textContent = account.slice(0, 6) + '...' + account.slice(-4);
+        document.getElementById('mintBtn').disabled = false;
+
+        try {
+          const totalMintedData = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: CONTRACT_ADDRESS, data: '0x5b92ac0d' }, 'latest']
+          });
+          totalMinted = parseInt(totalMintedData, 16);
+          document.getElementById('totalMinted').textContent = totalMinted;
+
+          const userMintedData = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: CONTRACT_ADDRESS, data: '0x0ebecd80' + account.slice(2).padStart(64, '0') }, 'latest']
+          });
+          userMinted = parseInt(userMintedData, 16);
+          document.getElementById('userMinted').textContent = userMinted;
+        } catch (error) {
+          console.log('Using demo data');
+        }
+      } catch (error) {
+        console.error('Connection error:', error);
+        alert('Failed to connect wallet');
+      }
+    });
+
+    document.getElementById('decreaseBtn').addEventListener('click', function() {
+      const input = document.getElementById('mintAmount');
+      const current = parseInt(input.value) || 1;
+      if (current > 1) {
+        input.value = current - 1;
+        updateCost();
+      }
+    });
+
+    document.getElementById('increaseBtn').addEventListener('click', function() {
+      const input = document.getElementById('mintAmount');
+      const current = parseInt(input.value) || 1;
+      const remaining = MAX_PER_WALLET - userMinted;
+      if (current < remaining) {
+        input.value = current + 1;
+        updateCost();
+      }
+    });
+
+    document.getElementById('mintAmount').addEventListener('input', updateCost);
+
+    document.getElementById('mintBtn').addEventListener('click', async function() {
+      if (!account) {
+        alert('Please connect wallet first!');
+        return;
+      }
+
+      const amount = parseInt(document.getElementById('mintAmount').value) || 1;
+
+      if (userMinted + amount > MAX_PER_WALLET) {
+        alert('Maximum ' + MAX_PER_WALLET + ' mints per wallet!');
+        return;
+      }
+
+      const statusEl = document.getElementById('statusMessage');
+      const mintBtn = document.getElementById('mintBtn');
+
+      mintBtn.disabled = true;
+      statusEl.className = 'status-message status-info';
+      statusEl.style.display = 'flex';
+      statusEl.innerHTML = '⏳ Preparing transaction...';
+
+      try {
+        const valueInWei = '0x' + Math.floor(MINT_PRICE * amount * 1e18).toString(16);
+        statusEl.innerHTML = '⏳ Minting in progress...';
+
+        const txHash = await window.ethereum.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: account,
+            to: CONTRACT_ADDRESS,
+            value: valueInWei,
+            data: '0xa0712d68' + amount.toString(16).padStart(64, '0')
+          }]
+        });
+
+        let receipt = null;
+        while (receipt === null) {
+          await new Promise(function(resolve) { setTimeout(resolve, 2000); });
+          receipt = await window.ethereum.request({
+            method: 'eth_getTransactionReceipt',
+            params: [txHash]
+          });
+        }
+
+        if (receipt.status === '0x1') {
+          statusEl.className = 'status-message status-success';
+          statusEl.innerHTML = '✅ Minting successful!';
+          userMinted += amount;
+          totalMinted += amount;
+          document.getElementById('userMinted').textContent = userMinted;
+          document.getElementById('totalMinted').textContent = totalMinted;
+          alert('Successfully minted ' + amount + ' FMAP NFT' + (amount > 1 ? 's' : '') + '!\n\nView on BaseScan:\nhttps://basescan.org/tx/' + txHash);
+        } else {
+          throw new Error('Transaction failed');
+        }
+      } catch (error) {
+        console.error('Mint error:', error);
+        statusEl.className = 'status-message status-error';
+        if (error.message.includes('user rejected')) {
+          statusEl.innerHTML = '❌ Transaction cancelled';
+        } else {
+          statusEl.innerHTML = '❌ Minting failed. Please try again.';
+        }
+      } finally {
+        mintBtn.disabled = false;
+        setTimeout(function() {
+          statusEl.style.display = 'none';
+        }, 5000);
+      }
+    });
+
+    updateCost();
+  </script>
+</body>
+</html>
