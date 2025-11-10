@@ -251,13 +251,32 @@
     </footer>
   </div>
 
-  <script>
+  <script type="module">
+    import { sdk } from "https://esm.sh/@farcaster/frame-sdk@0.2.0";
+    
     const CONTRACT_ADDRESS = '0xf9bb77aA3C2F5e7A3387331aa596269fE5920bF3';
     const MINT_PRICE = 0.00025;
     const MAX_PER_WALLET = 10;
     let account = null;
     let totalMinted = 0;
     let userMinted = 0;
+    let isFarcasterContext = false;
+
+    // Initialize Farcaster SDK
+    (async () => {
+      try {
+        const context = await sdk.context;
+        isFarcasterContext = true;
+        console.log('Farcaster context:', context);
+        
+        // Signal app is ready - CRITICAL!
+        sdk.actions.ready();
+        
+      } catch (error) {
+        console.log('Not in Farcaster context:', error);
+        isFarcasterContext = false;
+      }
+    })();
 
     // Generate stars
     const starsContainer = document.getElementById('stars');
@@ -291,6 +310,9 @@
 
     // AUTO-CONNECT WALLET on page load
     window.addEventListener('load', async function() {
+      // Wait for SDK to be ready
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
       if (typeof window.ethereum !== 'undefined') {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
