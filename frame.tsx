@@ -23,7 +23,8 @@ import { Frog } from 'frog'
          </div>
        ),
        intents: [
-         <Button.Link href="https://your-app.vercel.app">Mint Now</Button.Link>,
+         <Button.Link href="https://fmap-nft.vercel.app">Mint Now</Button.Link>,
        ]
      })
+
    })
