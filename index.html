@@ -5,12 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FMAP - Farcaster Map NFT</title>
   
-  <!-- Farcaster Frame Meta Tags -->
+  <!-- Farcaster Frame Meta Tags (Frame v2 - Interactive) -->
   <meta property="fc:frame" content="vNext" />
   <meta property="fc:frame:image" content="https://fmap-nft.vercel.app/frame-image.png" />
-  <meta property="fc:frame:button:1" content="Mint FMAP NFT" />
+  <meta property="fc:frame:image:aspect_ratio" content="1:1" />
+  
+  <!-- Button 1: Launch Mini App -->
+  <meta property="fc:frame:button:1" content="Launch App" />
   <meta property="fc:frame:button:1:action" content="link" />
   <meta property="fc:frame:button:1:target" content="https://fmap-nft.vercel.app" />
+  
+  <!-- Button 2: View Collection -->
+  <meta property="fc:frame:button:2" content="View on BaseScan" />
+  <meta property="fc:frame:button:2:action" content="link" />
+  <meta property="fc:frame:button:2:target" content="https://basescan.org/address/0xf9bb77aA3C2F5e7A3387331aa596269fE5920bF3" />
+  
+  <!-- Post URL for interactions -->
+  <meta property="fc:frame:post_url" content="https://fmap-nft.vercel.app/api/frame" />
   
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="FMAP - Farcaster Map NFT" />
