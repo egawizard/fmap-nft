@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FMAP - Farcaster Map NFT</title>
   
-  <!-- Farcaster Mini App Meta Tags -->
+  <!-- Farcaster Mini App Meta Tags (Correct Format) -->
   <meta name="fc:miniapp" content='{"version":"1","imageUrl":"https://fmap-nft.vercel.app/og-image.png","button":{"title":"🎨 Mint NFT","action":{"type":"launch_frame","name":"FMAP - Farcaster Map","url":"https://fmap-nft.vercel.app","splashImageUrl":"https://fmap-nft.vercel.app/og-image.png","splashBackgroundColor":"#000000"}}}' />
+  
+  <!-- Backward compatibility -->
   <meta name="fc:frame" content='{"version":"1","imageUrl":"https://fmap-nft.vercel.app/og-image.png","button":{"title":"🎨 Mint NFT","action":{"type":"launch_frame","name":"FMAP - Farcaster Map","url":"https://fmap-nft.vercel.app","splashImageUrl":"https://fmap-nft.vercel.app/og-image.png","splashBackgroundColor":"#000000"}}}' />
   
-  <!-- Open Graph Tags -->
+  <!-- Open Graph Tags (Fallback) -->
   <meta property="og:title" content="FMAP - Farcaster Map NFT" />
   <meta property="og:description" content="Mint your on-chain generated pixel art NFT on Base. 10K supply, $0.25 each!" />
   <meta property="og:image" content="https://fmap-nft.vercel.app/og-image.png" />
@@ -249,104 +251,13 @@
     </footer>
   </div>
 
-  <script type="module">
+  <script>
     const CONTRACT_ADDRESS = '0xf9bb77aA3C2F5e7A3387331aa596269fE5920bF3';
     const MINT_PRICE = 0.00025;
     const MAX_PER_WALLET = 10;
     let account = null;
     let totalMinted = 0;
     let userMinted = 0;
-    let isFarcasterContext = false;
-
-    // Import Farcaster SDK
-    let farcasterSDK = null;
-    import('https://esm.sh/@farcaster/auth-kit@0.3.4').then(module => {
-      farcasterSDK = module;
-      console.log('Farcaster SDK loaded');
-      isFarcasterContext = true;
-      
-      // Auto-connect Farcaster wallet on load
-      if (window.ethereum) {
-        autoConnectFarcaster();
-      }
-    }).catch(err => {
-      console.log('SDK not available, running in standard mode');
-      isFarcasterContext = false;
-    });
-    
-    // Auto-connect function
-    async function autoConnectFarcaster() {
-      try {
-        const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accounts && accounts.length > 0) {
-          account = accounts[0];
-          const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-          
-          if (chainId !== '0x2105') {
-            await switchToBase();
-          }
-          
-          updateWalletUI();
-          await loadContractData();
-        }
-      } catch (error) {
-        console.log('Auto-connect failed:', error);
-      }
-    }
-    
-    // Update wallet UI
-    function updateWalletUI() {
-      document.getElementById('connectBtn').style.display = 'none';
-      document.getElementById('walletInfo').style.display = 'block';
-      document.getElementById('walletAddress').textContent = account.slice(0, 6) + '...' + account.slice(-4);
-      document.getElementById('mintBtn').disabled = false;
-    }
-    
-    // Switch to Base network
-    async function switchToBase() {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x2105' }]
-        });
-      } catch (error) {
-        if (error.code === 4902) {
-          await window.ethereum.request({
-            method: 'wallet_addEthereumChain',
-            params: [{
-              chainId: '0x2105',
-              chainName: 'Base',
-              nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
-              rpcUrls: ['https://mainnet.base.org'],
-              blockExplorerUrls: ['https://basescan.org']
-            }]
-          });
-        } else {
-          throw error;
-        }
-      }
-    }
-    
-    // Load contract data
-    async function loadContractData() {
-      try {
-        const totalMintedData = await window.ethereum.request({
-          method: 'eth_call',
-          params: [{ to: CONTRACT_ADDRESS, data: '0x5b92ac0d' }, 'latest']
-        });
-        totalMinted = parseInt(totalMintedData, 16);
-        document.getElementById('totalMinted').textContent = totalMinted;
-
-        const userMintedData = await window.ethereum.request({
-          method: 'eth_call',
-          params: [{ to: CONTRACT_ADDRESS, data: '0x0ebecd80' + account.slice(2).padStart(64, '0') }, 'latest']
-        });
-        userMinted = parseInt(userMintedData, 16);
-        document.getElementById('userMinted').textContent = userMinted;
-      } catch (error) {
-        console.log('Using demo data');
-      }
-    }
 
     // Generate stars
     const starsContainer = document.getElementById('stars');
@@ -378,7 +289,66 @@
       document.getElementById('totalCostUSD').textContent = '$' + (MINT_PRICE * amount * 4000).toFixed(2);
     }
 
-    // Connect wallet button
+    // AUTO-CONNECT WALLET on page load
+    window.addEventListener('load', async function() {
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+          if (accounts && accounts.length > 0) {
+            account = accounts[0];
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            
+            if (chainId !== '0x2105') {
+              try {
+                await window.ethereum.request({
+                  method: 'wallet_switchEthereumChain',
+                  params: [{ chainId: '0x2105' }]
+                });
+              } catch (error) {
+                if (error.code === 4902) {
+                  await window.ethereum.request({
+                    method: 'wallet_addEthereumChain',
+                    params: [{
+                      chainId: '0x2105',
+                      chainName: 'Base',
+                      nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+                      rpcUrls: ['https://mainnet.base.org'],
+                      blockExplorerUrls: ['https://basescan.org']
+                    }]
+                  });
+                }
+              }
+            }
+            
+            document.getElementById('connectBtn').style.display = 'none';
+            document.getElementById('walletInfo').style.display = 'block';
+            document.getElementById('walletAddress').textContent = account.slice(0, 6) + '...' + account.slice(-4);
+            document.getElementById('mintBtn').disabled = false;
+
+            try {
+              const totalMintedData = await window.ethereum.request({
+                method: 'eth_call',
+                params: [{ to: CONTRACT_ADDRESS, data: '0x5b92ac0d' }, 'latest']
+              });
+              totalMinted = parseInt(totalMintedData, 16);
+              document.getElementById('totalMinted').textContent = totalMinted;
+
+              const userMintedData = await window.ethereum.request({
+                method: 'eth_call',
+                params: [{ to: CONTRACT_ADDRESS, data: '0x0ebecd80' + account.slice(2).padStart(64, '0') }, 'latest']
+              });
+              userMinted = parseInt(userMintedData, 16);
+              document.getElementById('userMinted').textContent = userMinted;
+            } catch (error) {
+              console.log('Using demo data');
+            }
+          }
+        } catch (error) {
+          console.log('Auto-connect not available');
+        }
+      }
+    });
+
     document.getElementById('connectBtn').addEventListener('click', async function() {
       if (typeof window.ethereum === 'undefined') {
         alert('Please install MetaMask or Coinbase Wallet!\n\nFor Farcaster users: Open this link in Warpcast browser.');
@@ -387,15 +357,55 @@
 
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        account = accounts[0];
-        
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+
         if (chainId !== '0x2105') {
-          await switchToBase();
+          try {
+            await window.ethereum.request({
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: '0x2105' }]
+            });
+          } catch (error) {
+            if (error.code === 4902) {
+              await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params: [{
+                  chainId: '0x2105',
+                  chainName: 'Base',
+                  nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+                  rpcUrls: ['https://mainnet.base.org'],
+                  blockExplorerUrls: ['https://basescan.org']
+                }]
+              });
+            } else {
+              throw error;
+            }
+          }
         }
 
-        updateWalletUI();
-        await loadContractData();
+        account = accounts[0];
+        document.getElementById('connectBtn').style.display = 'none';
+        document.getElementById('walletInfo').style.display = 'block';
+        document.getElementById('walletAddress').textContent = account.slice(0, 6) + '...' + account.slice(-4);
+        document.getElementById('mintBtn').disabled = false;
+
+        try {
+          const totalMintedData = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: CONTRACT_ADDRESS, data: '0x5b92ac0d' }, 'latest']
+          });
+          totalMinted = parseInt(totalMintedData, 16);
+          document.getElementById('totalMinted').textContent = totalMinted;
+
+          const userMintedData = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: CONTRACT_ADDRESS, data: '0x0ebecd80' + account.slice(2).padStart(64, '0') }, 'latest']
+          });
+          userMinted = parseInt(userMintedData, 16);
+          document.getElementById('userMinted').textContent = userMinted;
+        } catch (error) {
+          console.log('Using demo data');
+        }
       } catch (error) {
         console.error('Connection error:', error);
         alert('Failed to connect wallet');
@@ -423,7 +433,6 @@
 
     document.getElementById('mintAmount').addEventListener('input', updateCost);
 
-    // Mint button
     document.getElementById('mintBtn').addEventListener('click', async function() {
       if (!account) {
         alert('Please connect wallet first!');
@@ -472,13 +481,13 @@
 
         if (receipt && receipt.status === '0x1') {
           statusEl.className = 'status-message status-success';
-          statusEl.innerHTML = '✅ Minting successful! Opening Farcaster composer...';
+          statusEl.innerHTML = '✅ Minting successful! Opening Warpcast...';
           userMinted += amount;
           totalMinted += amount;
           document.getElementById('userMinted').textContent = userMinted;
           document.getElementById('totalMinted').textContent = totalMinted;
           
-          // Create Farcaster cast
+          // AUTO-CAST to Farcaster
           const castText = `Just minted ${amount} FMAP NFT${amount > 1 ? 's' : ''} on Base! 🎨✨
 
 🔗 Mint yours: https://fmap-nft.vercel.app
@@ -486,8 +495,7 @@
 
 Tx: https://basescan.org/tx/${txHash}`;
           
-          // Open Warpcast composer
-          setTimeout(() => {
+          setTimeout(function() {
             const castUrl = `https://warpcast.com/~/compose?text=${encodeURIComponent(castText)}`;
             window.open(castUrl, '_blank');
           }, 1000);
