@@ -11,8 +11,8 @@
   <meta property="fc:frame:image:aspect_ratio" content="1:1" />
   
   <!-- Button: Launch Mini App -->
-  <meta property="fc:frame:button:1" content="Mint NFT" />
-  <meta property="fc:frame:button:1:action" content="launch_frame" />
+  <meta property="fc:frame:button:1" content="🎨 Mint NFT" />
+  <meta property="fc:frame:button:1:action" content="link" />
   <meta property="fc:frame:button:1:target" content="https://fmap-nft.vercel.app" />
   
   <!-- Open Graph Meta Tags -->
@@ -32,9 +32,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap" rel="stylesheet">
-  
-  <!-- Farcaster Frame SDK -->
-  <script src="https://unpkg.com/@farcaster/frame-sdk@0.2.0/dist/index.global.js"></script>
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'JetBrains Mono', monospace; }
@@ -265,39 +262,6 @@
     let account = null;
     let totalMinted = 0;
     let userMinted = 0;
-    let frameSDK = null;
-    let isFarcasterFrame = false;
-
-    // Initialize on page load
-    window.addEventListener('load', async function() {
-      await initializeFarcasterSDK();
-      updateCost();
-    });
-  </script>
-</body>
-</html> Initialize Farcaster Frame SDK
-    async function initializeFarcasterSDK() {
-      try {
-        if (typeof window.FrameSDK !== 'undefined') {
-          frameSDK = window.FrameSDK;
-          await frameSDK.actions.ready();
-          
-          // Get Farcaster context
-          const context = await frameSDK.context;
-          isFarcasterFrame = true;
-          
-          console.log('Farcaster Frame initialized:', context);
-          
-          // Auto-connect if in Farcaster
-          if (context.user) {
-            document.getElementById('connectBtn').textContent = 'Connect with Farcaster';
-          }
-        }
-      } catch (error) {
-        console.log('Not in Farcaster Frame:', error);
-        isFarcasterFrame = false;
-      }
-    }
 
     // Generate stars
     const starsContainer = document.getElementById('stars');
@@ -329,32 +293,9 @@
       document.getElementById('totalCostUSD').textContent = '$' + (MINT_PRICE * amount * 4000).toFixed(2);
     }
 
-    async function connectWallet() {
-      // If in Farcaster Frame, use Farcaster wallet
-      if (isFarcasterFrame && frameSDK) {
-        try {
-          const provider = await frameSDK.wallet.ethProvider;
-          const accounts = await provider.request({
-            method: 'eth_requestAccounts'
-          });
-          
-          account = accounts[0];
-          document.getElementById('connectBtn').style.display = 'none';
-          document.getElementById('walletInfo').style.display = 'block';
-          document.getElementById('walletAddress').textContent = account.slice(0, 6) + '...' + account.slice(-4);
-          document.getElementById('mintBtn').disabled = false;
-          
-          await loadContractData();
-          return;
-        } catch (error) {
-          console.error('Farcaster wallet error:', error);
-          // Fallback to MetaMask if Farcaster wallet fails
-        }
-      }
-      
-      // Fallback to MetaMask
+    document.getElementById('connectBtn').addEventListener('click', async function() {
       if (typeof window.ethereum === 'undefined') {
-        alert('Please install MetaMask or open in Farcaster!');
+        alert('Please install MetaMask or Coinbase Wallet!\n\nFor Farcaster users: Open this link in Warpcast browser.');
         return;
       }
 
@@ -392,43 +333,28 @@
         document.getElementById('walletAddress').textContent = account.slice(0, 6) + '...' + account.slice(-4);
         document.getElementById('mintBtn').disabled = false;
 
-        await loadContractData();
+        try {
+          const totalMintedData = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: CONTRACT_ADDRESS, data: '0x5b92ac0d' }, 'latest']
+          });
+          totalMinted = parseInt(totalMintedData, 16);
+          document.getElementById('totalMinted').textContent = totalMinted;
+
+          const userMintedData = await window.ethereum.request({
+            method: 'eth_call',
+            params: [{ to: CONTRACT_ADDRESS, data: '0x0ebecd80' + account.slice(2).padStart(64, '0') }, 'latest']
+          });
+          userMinted = parseInt(userMintedData, 16);
+          document.getElementById('userMinted').textContent = userMinted;
+        } catch (error) {
+          console.log('Using demo data');
+        }
       } catch (error) {
         console.error('Connection error:', error);
         alert('Failed to connect wallet');
       }
-    }
-
-    async function loadContractData() {
-      try {
-        let provider;
-        
-        if (isFarcasterFrame && frameSDK) {
-          provider = await frameSDK.wallet.ethProvider;
-        } else {
-          provider = window.ethereum;
-        }
-        
-        const totalMintedData = await provider.request({
-          method: 'eth_call',
-          params: [{ to: CONTRACT_ADDRESS, data: '0x5b92ac0d' }, 'latest']
-        });
-        totalMinted = parseInt(totalMintedData, 16);
-        document.getElementById('totalMinted').textContent = totalMinted;
-
-        const userMintedData = await provider.request({
-          method: 'eth_call',
-          params: [{ to: CONTRACT_ADDRESS, data: '0x0ebecd80' + account.slice(2).padStart(64, '0') }, 'latest']
-        });
-        userMinted = parseInt(userMintedData, 16);
-        document.getElementById('userMinted').textContent = userMinted;
-      } catch (error) {
-        console.log('Contract data load error (using demo data):', error);
-        // Keep default values for demo
-      }
-    }
-
-    document.getElementById('connectBtn').addEventListener('click', connectWallet);
+    });
 
     document.getElementById('decreaseBtn').addEventListener('click', function() {
       const input = document.getElementById('mintAmount');
@@ -473,18 +399,10 @@
       statusEl.innerHTML = '⏳ Preparing transaction...';
 
       try {
-        let provider;
-        
-        if (isFarcasterFrame && frameSDK) {
-          provider = await frameSDK.wallet.ethProvider;
-        } else {
-          provider = window.ethereum;
-        }
-        
         const valueInWei = '0x' + Math.floor(MINT_PRICE * amount * 1e18).toString(16);
         statusEl.innerHTML = '⏳ Minting in progress...';
 
-        const txHash = await provider.request({
+        const txHash = await window.ethereum.request({
           method: 'eth_sendTransaction',
           params: [{
             from: account,
@@ -498,7 +416,7 @@
         let attempts = 0;
         while (receipt === null && attempts < 30) {
           await new Promise(function(resolve) { setTimeout(resolve, 2000); });
-          receipt = await provider.request({
+          receipt = await window.ethereum.request({
             method: 'eth_getTransactionReceipt',
             params: [txHash]
           });
@@ -512,16 +430,6 @@
           totalMinted += amount;
           document.getElementById('userMinted').textContent = userMinted;
           document.getElementById('totalMinted').textContent = totalMinted;
-          
-          // Notify Farcaster Frame of success
-          if (isFarcasterFrame && frameSDK) {
-            try {
-              await frameSDK.actions.close();
-            } catch (e) {
-              console.log('Frame close not available:', e);
-            }
-          }
-          
           alert('Successfully minted ' + amount + ' FMAP NFT' + (amount > 1 ? 's' : '') + '!\n\nView on BaseScan:\nhttps://basescan.org/tx/' + txHash);
         } else {
           throw new Error('Transaction failed or timeout');
@@ -542,4 +450,7 @@
       }
     });
 
-    //
+    updateCost();
+  </script>
+</body>
+</html>
