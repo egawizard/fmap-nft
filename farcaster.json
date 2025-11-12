@@ -1,0 +1,19 @@
+{
+  "miniapp": {
+    "version": "1",
+    "name": "GODMODE Token",
+    "iconUrl": "https://claim-token-godmode.netlify.app/public/og.png",
+    "homeUrl": "https://claim-token-godmode.netlify.app/app.html",
+    "imageUrl": "https://claim-token-godmode.netlify.app/public/og.png",
+    "buttonTitle": "🚀 Mint Now",
+    "splashImageUrl": "https://claim-token-godmode.netlify.app/public/og.png",
+    "splashBackgroundColor": "#667eea",
+    "subtitle": "FREE MINT ON BASE MAINNET",
+    "description": "Mint $GODMODE tokens on Base Mainnet. 1B total supply, 50x max per user!",
+    "primaryCategory": "finance",
+    "tags": ["token", "mint", "base", "web3", "crypto"],
+    "ogTitle": "CLAIM TOKEN $GODMODE - FREE MINT",
+    "ogDescription": "Mint $GODMODE tokens on Base Mainnet. 1B total supply, 50x max per user!",
+    "ogImageUrl": "https://claim-token-godmode.netlify.app/public/og.png"
+  }
+}
