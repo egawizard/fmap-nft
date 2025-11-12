@@ -1,69 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CLAIM TOKEN $GODMODE - FREE MINT</title>
   
-  <!-- Farcaster Frame Meta Tags (Minimal & Correct) -->
-  <meta property="fc:frame" content="vNext">
-  <meta property="fc:frame:image" content="https://claim-token-godmode.netlify.app/public/og.png">
-  <meta property="fc:frame:button:1" content="Mint Now">
-  <meta property="fc:frame:button:1:action" content="link">
-  <meta property="fc:frame:button:1:target" content="https://claim-token-godmode.netlify.app/app.html">
+  <!-- Farcaster Mini App Embed (Correct Format) -->
+  <meta name="fc:frame" content='{"version":"1","imageUrl":"https://claim-token-godmode.netlify.app/public/og.png","button":{"title":"Mint Now","action":{"type":"launch_frame","name":"GODMODE Token","url":"https://claim-token-godmode.netlify.app/app.html","splashImageUrl":"https://claim-token-godmode.netlify.app/public/og.png","splashBackgroundColor":"#667eea"}}}'>
   
   <!-- Open Graph -->
   <meta property="og:title" content="CLAIM TOKEN $GODMODE - FREE MINT">
+  <meta property="og:description" content="Mint $GODMODE tokens on Base Mainnet. 1B total supply, 50x max per user!">
   <meta property="og:image" content="https://claim-token-godmode.netlify.app/public/og.png">
   
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      text-align: center;
-      padding: 50px;
-      margin: 0;
       min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      padding: 20px;
+      color: #fff;
     }
     .container {
       max-width: 600px;
+      width: 100%;
+      text-align: center;
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
+      border-radius: 24px;
       padding: 40px;
-      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     h1 {
-      font-size: 60px;
+      font-size: 64px;
+      font-weight: 900;
       background: linear-gradient(135deg, #ffd700, #ffed4e);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 20px;
     }
-    p {
+    .subtitle {
       font-size: 20px;
+      font-weight: 600;
       margin-bottom: 30px;
+      opacity: 0.95;
     }
     .stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 30px 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
     }
     .stat {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .stat-value {
-      font-size: 24px;
-      color: #ffd700;
-      font-weight: bold;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
     .stat-label {
-      font-size: 12px;
+      font-size: 11px;
       opacity: 0.8;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      color: #ffd700;
     }
     a {
       display: inline-block;
@@ -72,31 +80,36 @@
       color: #000;
       text-decoration: none;
       border-radius: 12px;
-      font-weight: bold;
-      font-size: 18px;
-      margin-top: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      transition: transform 0.2s;
+    }
+    a:hover { transform: translateY(-2px); }
+    @media (max-width: 480px) {
+      h1 { font-size: 48px; }
+      .stats { grid-template-columns: 1fr; gap: 10px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>$GODMODE</h1>
-    <p>FREE MINT ON BASE MAINNET</p>
+    <p class="subtitle">FREE MINT ON BASE MAINNET</p>
     <div class="stats">
       <div class="stat">
-        <div class="stat-value">1B</div>
         <div class="stat-label">Supply</div>
+        <div class="stat-value">1B</div>
       </div>
       <div class="stat">
-        <div class="stat-value">50x</div>
         <div class="stat-label">Max/User</div>
+        <div class="stat-value">50x</div>
       </div>
       <div class="stat">
-        <div class="stat-value">45K</div>
         <div class="stat-label">Per Mint</div>
+        <div class="stat-value">45K</div>
       </div>
     </div>
-    <a href="app.html">Launch Mint App</a>
+    <a href="app.html">🚀 Launch App</a>
   </div>
 </body>
 </html>
