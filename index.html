@@ -5,20 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CLAIM TOKEN $GODMODE - FREE MINT</title>
   
-  <!-- Farcaster Mini App Meta Tags (CORRECT FORMAT) -->
-  <meta name="fc:miniapp" content='{"version":"1","imageUrl":"https://claim-token-godmode.netlify.app/public/og.png","button":{"title":"🚀 Mint Now","action":{"type":"launch_frame","name":"GODMODE Token","url":"https://claim-token-godmode.netlify.app/app.html","splashImageUrl":"https://claim-token-godmode.netlify.app/public/og.png","splashBackgroundColor":"#667eea"}}}' />
+  <!-- Farcaster Frame Meta Tags -->
+  <meta property="fc:frame" content="vNext">
+  <meta property="fc:frame:image" content="https://claim-token-godmode.netlify.app/public/og.png">
+  <meta property="fc:frame:image:aspect_ratio" content="1:1">
+  <meta property="fc:frame:button:1" content="🚀 Mint Now">
+  <meta property="fc:frame:button:1:action" content="link">
+  <meta property="fc:frame:button:1:target" content="https://claim-token-godmode.netlify.app/app.html">
+  <meta property="fc:frame:post_url" content="https://claim-token-godmode.netlify.app/">
   
-  <!-- Open Graph Tags (Fallback) -->
-  <meta property="og:title" content="CLAIM TOKEN $GODMODE - FREE MINT" />
-  <meta property="og:description" content="Mint $GODMODE tokens on Base Mainnet. 1B total supply, 50x max per user!" />
-  <meta property="og:image" content="https://claim-token-godmode.netlify.app/public/og.png" />
-  <meta property="og:url" content="https://claim-token-godmode.netlify.app" />
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="CLAIM TOKEN $GODMODE - FREE MINT">
+  <meta property="og:description" content="Mint $GODMODE tokens on Base Mainnet. 1B total supply, 50x max per user!">
+  <meta property="og:image" content="https://claim-token-godmode.netlify.app/public/og.png">
+  <meta property="og:url" content="https://claim-token-godmode.netlify.app/">
+  <meta property="og:type" content="website">
 
-  <!-- Twitter Meta Tags -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="CLAIM TOKEN $GODMODE - FREE MINT" />
-  <meta name="twitter:description" content="Mint $GODMODE tokens on Base Mainnet" />
-  <meta name="twitter:image" content="https://claim-token-godmode.netlify.app/public/og.png" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CLAIM TOKEN $GODMODE - FREE MINT">
+  <meta name="twitter:description" content="Mint $GODMODE tokens on Base Mainnet">
+  <meta name="twitter:image" content="https://claim-token-godmode.netlify.app/public/og.png">
 
   <style>
     * {
@@ -206,13 +213,5 @@
       </div>
     </div>
   </div>
-
-  <script>
-    // Auto-redirect if accessed from Farcaster with specific intent
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('launch') === 'true') {
-      window.location.href = 'app.html';
-    }
-  </script>
 </body>
 </html>
